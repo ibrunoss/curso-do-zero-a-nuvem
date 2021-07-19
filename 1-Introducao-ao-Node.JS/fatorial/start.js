@@ -16,4 +16,3 @@ const fatorial = (num) => {
  */
 
 module.exports = fatorial
-//Usando Módulos Personalizados
