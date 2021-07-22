@@ -8,3 +8,4 @@ const fatorial = (num) => {
     return num * exports.fatorial(num - 1);
 };
 exports.fatorial = fatorial;
+//# sourceMappingURL=fatorial.js.map
