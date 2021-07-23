@@ -1,9 +1,10 @@
 import Server from "./server/server";
+import usersRouter from "./users/users.router";
 
 const server = new Server(process.env.SERVER_PORT);
 
 server
-  .bootstrap()
+  .bootstrap([usersRouter])
   .then(() =>
     console.log("Server is running on:", server.application.address())
   )
