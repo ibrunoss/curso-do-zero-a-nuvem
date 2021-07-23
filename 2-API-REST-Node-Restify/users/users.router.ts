@@ -8,7 +8,18 @@ class UsersRouter extends Router {
     application.get("/users", (req, resp, next) => {
       User.findAll().then((users) => {
         resp.json(users);
-        next();
+        return next();
+      });
+    });
+
+    application.get("/users/:id", (req, resp, next) => {
+      User.findByID(req.params.id).then((user) => {
+        if (user) {
+          resp.json(user);
+          return next();
+        }
+        resp.send(404);
+        return next();
       });
     });
   }
