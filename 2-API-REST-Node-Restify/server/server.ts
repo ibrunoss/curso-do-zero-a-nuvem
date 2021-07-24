@@ -1,10 +1,18 @@
 import * as restify from "restify";
+import * as mongoose from "mongoose";
 
 import Router from "../common/router";
 export default class Server {
-  constructor(private port: number | string = 3000) {}
+  constructor(private port: number | string, private dbURL: string) {}
 
   application: restify.Server;
+
+  initializeDB(): Promise<typeof mongoose> {
+    return mongoose.connect(this.dbURL, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+  }
 
   initRoutes(routers: Router[]): Promise<any> {
     return new Promise((resolve, reject) => {
@@ -29,6 +37,8 @@ export default class Server {
   }
 
   bootstrap(routers: Router[] = []): Promise<Server> {
-    return this.initRoutes(routers).then(() => this);
+    return this.initializeDB().then(() =>
+      this.initRoutes(routers).then(() => this)
+    );
   }
 }
