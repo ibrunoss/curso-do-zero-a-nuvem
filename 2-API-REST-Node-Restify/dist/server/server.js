@@ -11,6 +11,7 @@ class Server {
         return mongoose.connect(this.dbURL, {
             useNewUrlParser: true,
             useUnifiedTopology: true,
+            useCreateIndex: true,
         });
     }
     initRoutes(routers) {
