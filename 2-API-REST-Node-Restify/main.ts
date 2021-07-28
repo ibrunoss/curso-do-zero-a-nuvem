@@ -1,10 +1,8 @@
 import Server from "./server/server";
 import usersRouter from "./users/users.router";
+import environment from "./common/environment";
 
-const server = new Server(
-  process.env.SERVER_PORT || 3000,
-  process.env.DB_URL || "mongodb://localhost/meat-api"
-);
+const server = new Server(environment.server.port, environment.db.url);
 
 server
   .bootstrap([usersRouter])

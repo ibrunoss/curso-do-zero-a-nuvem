@@ -2,7 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const server_1 = require("./server/server");
 const users_router_1 = require("./users/users.router");
-const server = new server_1.default(process.env.SERVER_PORT || 3000, process.env.DB_URL || "mongodb://localhost/meat-api");
+const environment_1 = require("./common/environment");
+const server = new server_1.default(environment_1.default.server.port, environment_1.default.db.url);
 server
     .bootstrap([users_router_1.default])
     .then(() => console.log("Server is running on:", server.application.address()))
