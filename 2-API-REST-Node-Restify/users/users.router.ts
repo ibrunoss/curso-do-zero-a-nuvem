@@ -1,7 +1,7 @@
 import * as restify from "restify";
 
 import Router from "../common/router";
-import User from "./user.model";
+import { User } from "./user.model";
 
 class UsersRouter extends Router {
   applyRoutes(application: restify.Server) {
@@ -19,6 +19,15 @@ class UsersRouter extends Router {
           return next();
         }
         resp.send(404);
+        return next();
+      });
+    });
+
+    application.post("/users", (req, resp, next) => {
+      const user = new User(req.body);
+      user.save().then((user) => {
+        user.password = undefined;
+        resp.json(user);
         return next();
       });
     });
