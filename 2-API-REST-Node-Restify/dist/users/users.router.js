@@ -28,6 +28,20 @@ class UsersRouter extends router_1.default {
                 return next();
             });
         });
+        application.put("/users/:id", (req, resp, next) => {
+            user_model_1.User.replaceOne({ _id: req.params.id }, req.body)
+                .exec()
+                .then((result) => {
+                if (result.n) {
+                    return user_model_1.User.findById(req.params.id);
+                }
+                resp.send(404);
+            })
+                .then((user) => {
+                resp.json(user);
+                return next();
+            });
+        });
     }
 }
 exports.default = new UsersRouter();
