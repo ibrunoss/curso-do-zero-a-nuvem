@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const restify = require("restify");
 const mongoose = require("mongoose");
+const merge_patch_parser_1 = require("./merge-patch.parser");
 class Server {
     constructor(port, dbURL) {
         this.port = port;
@@ -12,6 +13,7 @@ class Server {
             useNewUrlParser: true,
             useUnifiedTopology: true,
             useCreateIndex: true,
+            useFindAndModify: false,
         });
     }
     initRoutes(routers) {
@@ -23,6 +25,7 @@ class Server {
                 });
                 this.application.use(restify.plugins.queryParser());
                 this.application.use(restify.plugins.bodyParser());
+                this.application.use(merge_patch_parser_1.mergePatchBodyParser);
                 //Routes
                 for (let router of routers) {
                     router.applyRoutes(this.application);

@@ -2,6 +2,8 @@ import * as restify from "restify";
 import * as mongoose from "mongoose";
 
 import Router from "../common/router";
+import { mergePatchBodyParser } from "./merge-patch.parser";
+
 export default class Server {
   constructor(private port: number | string, private dbURL: string) {}
 
@@ -12,6 +14,7 @@ export default class Server {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       useCreateIndex: true,
+      useFindAndModify: false,
     });
   }
 
@@ -25,6 +28,7 @@ export default class Server {
 
         this.application.use(restify.plugins.queryParser());
         this.application.use(restify.plugins.bodyParser());
+        this.application.use(mergePatchBodyParser);
 
         //Routes
         for (let router of routers) {
