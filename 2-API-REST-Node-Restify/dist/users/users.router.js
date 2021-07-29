@@ -52,6 +52,20 @@ class UsersRouter extends router_1.default {
                 resp.send(404);
             });
         });
+        application.del("/users/:id", (req, resp, next) => {
+            const options = { new: true };
+            user_model_1.User.remove({ _id: req.params.id })
+                .exec()
+                .then((result) => {
+                if (result.n) {
+                    resp.send(204);
+                }
+                else {
+                    resp.send(404);
+                }
+                return next();
+            });
+        });
     }
 }
 exports.default = new UsersRouter();
