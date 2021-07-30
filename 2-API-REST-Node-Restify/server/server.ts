@@ -3,6 +3,7 @@ import * as mongoose from "mongoose";
 
 import Router from "../common/router";
 import { mergePatchBodyParser } from "./merge-patch.parser";
+import handleError from "./error.handler";
 
 export default class Server {
   constructor(private port: number | string, private dbURL: string) {}
@@ -34,6 +35,8 @@ export default class Server {
         for (let router of routers) {
           router.applyRoutes(this.application);
         }
+
+        this.application.on("restifyError", handleError);
 
         this.application.listen(this.port, () => resolve(this.application));
       } catch (error) {

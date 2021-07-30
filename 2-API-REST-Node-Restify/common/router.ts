@@ -1,5 +1,6 @@
-import { Server, Response, Next } from "restify";
 import { EventEmitter } from "events";
+import { Server, Response, Next } from "restify";
+import { NotFoundError } from "restify-errors";
 
 export default abstract class Router extends EventEmitter {
   abstract applyRoutes(application: Server);
@@ -10,7 +11,7 @@ export default abstract class Router extends EventEmitter {
         this.emit("beforeRender", document);
         response.json(document);
       } else {
-        response.send(404);
+        throw new NotFoundError("Documento não encontrado");
       }
       return next();
     };

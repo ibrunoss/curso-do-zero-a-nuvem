@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const restify = require("restify");
 const mongoose = require("mongoose");
 const merge_patch_parser_1 = require("./merge-patch.parser");
+const error_handler_1 = require("./error.handler");
 class Server {
     constructor(port, dbURL) {
         this.port = port;
@@ -30,6 +31,7 @@ class Server {
                 for (let router of routers) {
                     router.applyRoutes(this.application);
                 }
+                this.application.on("restifyError", error_handler_1.default);
                 this.application.listen(this.port, () => resolve(this.application));
             }
             catch (error) {
