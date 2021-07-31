@@ -20,7 +20,8 @@ class UsersRouter extends router_1.default {
             user.save().then(this.render(resp, next)).catch(next);
         });
         application.put("/users/:id", (req, resp, next) => {
-            user_model_1.User.replaceOne({ _id: req.params.id }, req.body)
+            const options = { runValidators: true };
+            user_model_1.User.replaceOne({ _id: req.params.id }, req.body, options)
                 .exec()
                 .then((result) => {
                 if (result.n) {
@@ -32,7 +33,7 @@ class UsersRouter extends router_1.default {
                 .catch(next);
         });
         application.patch("/users/:id", (req, resp, next) => {
-            const options = { new: true };
+            const options = { new: true, runValidators: true };
             user_model_1.User.findByIdAndUpdate(req.params.id, req.body, options)
                 .then(this.render(resp, next))
                 .catch(next);
