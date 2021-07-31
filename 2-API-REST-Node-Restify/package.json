@@ -10,10 +10,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^5.0.1",
     "mongoose": "^5.13.3",
     "restify": "^8.5.1"
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.0",
     "@types/restify": "^8.5.2",
     "@types/restify-errors": "^4.3.4"
   }

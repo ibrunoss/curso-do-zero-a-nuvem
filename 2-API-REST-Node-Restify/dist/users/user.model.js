@@ -2,7 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.User = void 0;
 const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
 const validators_1 = require("../common/validators");
+const environment_1 = require("../common/environment");
 const userSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -34,5 +36,18 @@ const userSchema = new mongoose.Schema({
             message: "Invalid CPF ({VALUE})", //{PATH}:
         },
     },
+});
+userSchema.pre("save", function (next) {
+    const user = this;
+    if (!user.isModified("password")) {
+        return next();
+    }
+    bcrypt
+        .hash(user.password, environment_1.default.security.salt)
+        .then((hash) => {
+        user.password = hash;
+        next();
+    })
+        .catch(next);
 });
 exports.User = mongoose.model("User", userSchema);
