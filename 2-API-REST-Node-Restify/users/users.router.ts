@@ -1,62 +1,23 @@
 import * as restify from "restify";
-import { NotFoundError } from "restify-errors";
 
-import Router from "../common/router";
-import { User } from "./user.model";
+import ModelRouter from "../common/model-router";
+import User from "./user.model";
 
-class UsersRouter extends Router {
+class UsersRouter extends ModelRouter<User> {
   constructor() {
-    super();
+    super(User);
     this.on("beforeRender", (document) => (document.password = undefined));
   }
   applyRoutes(application: restify.Server) {
-    application.get("/users", (req, resp, next) => {
-      User.find().then(this.render(resp, next)).catch(next);
-    });
+    const { validateId, findAll, findById, save, replace, update, remove } =
+      this;
 
-    application.get("/users/:id", (req, resp, next) => {
-      User.findById(req.params.id).then(this.render(resp, next)).catch(next);
-    });
-
-    application.post("/users", (req, resp, next) => {
-      const user = new User(req.body);
-      user.save().then(this.render(resp, next)).catch(next);
-    });
-
-    application.put("/users/:id", (req, resp, next) => {
-      const options = { runValidators: true };
-      User.replaceOne({ _id: req.params.id }, req.body, options)
-        .exec()
-        .then((result) => {
-          if (result.n) {
-            return User.findById(req.params.id);
-          }
-          throw new NotFoundError("Documento não encontrado");
-        })
-        .then(this.render(resp, next))
-        .catch(next);
-    });
-
-    application.patch("/users/:id", (req, resp, next) => {
-      const options = { new: true, runValidators: true };
-      User.findByIdAndUpdate(req.params.id, req.body, options)
-        .then(this.render(resp, next))
-        .catch(next);
-    });
-
-    application.del("/users/:id", (req, resp, next) => {
-      User.remove({ _id: req.params.id })
-        .exec()
-        .then((result) => {
-          if (result.n) {
-            resp.send(204);
-          } else {
-            throw new NotFoundError("Documento não encontrado");
-          }
-          return next();
-        })
-        .catch(next);
-    });
+    application.get("/users", findAll);
+    application.get("/users/:id", [validateId, findById]);
+    application.post("/users", save);
+    application.put("/users/:id", [validateId, replace]);
+    application.patch("/users/:id", [validateId, update]);
+    application.del("/users/:id", [validateId, remove]);
   }
 }
 
