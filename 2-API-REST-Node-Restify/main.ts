@@ -2,11 +2,12 @@ import Server from "./server/server";
 import usersRouter from "./users/users.router";
 import restaurantsRouter from "./restaurants/restaurants.router";
 import environment from "./common/environment";
+import reviewsRouter from "./reviews/reviews.router";
 
 const server = new Server(environment.server.port, environment.db.url);
 
 server
-  .bootstrap([usersRouter, restaurantsRouter])
+  .bootstrap([usersRouter, restaurantsRouter, reviewsRouter])
   .then(() =>
     console.log("Server is running on:", server.application.address())
   )
