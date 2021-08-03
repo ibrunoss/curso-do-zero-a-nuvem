@@ -8,6 +8,14 @@ class ReviewsRouter extends ModelRouter<Review> {
     super(Review);
   }
 
+  findById = (req: Request, resp: Response, next: Next) => {
+    Review.findById(req.params.id)
+      .populate("user", "name")
+      .populate("restaurant")
+      .then(this.render(resp, next))
+      .catch(next);
+  };
+
   applyRoutes(application: Server) {
     const { validateId, findAll, findById, save } = this;
 
