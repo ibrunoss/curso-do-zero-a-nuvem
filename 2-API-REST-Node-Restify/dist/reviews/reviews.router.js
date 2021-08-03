@@ -5,13 +5,9 @@ const reviews_model_1 = require("./reviews.model");
 class ReviewsRouter extends model_router_1.default {
     constructor() {
         super(reviews_model_1.default);
-        this.findById = (req, resp, next) => {
-            reviews_model_1.default.findById(req.params.id)
-                .populate("user", "name")
-                .populate("restaurant")
-                .then(this.render(resp, next))
-                .catch(next);
-        };
+    }
+    prepareOne(query) {
+        return query.populate("user", "name").populate("restaurant");
     }
     applyRoutes(application) {
         const { validateId, findAll, findById, save } = this;

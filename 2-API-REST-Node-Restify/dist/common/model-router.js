@@ -18,8 +18,7 @@ class ModelRouter extends router_1.default {
             this.model.find().then(this.renderAll(resp, next)).catch(next);
         };
         this.findById = (req, resp, next) => {
-            this.model
-                .findById(req.params.id)
+            this.prepareOne(this.model.findById(req.params.id))
                 .then(this.render(resp, next))
                 .catch(next);
         };
@@ -63,6 +62,9 @@ class ModelRouter extends router_1.default {
             })
                 .catch(next);
         };
+    }
+    prepareOne(query) {
+        return query;
     }
 }
 exports.default = ModelRouter;

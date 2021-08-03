@@ -1,4 +1,4 @@
-import { Model, Document, Types } from "mongoose";
+import { Model, Document, Query, Types } from "mongoose";
 import { NotFoundError } from "restify-errors";
 
 import Router from "./router";
@@ -6,6 +6,10 @@ import Router from "./router";
 export default abstract class ModelRouter<D extends Document> extends Router {
   constructor(protected model: Model<D>) {
     super();
+  }
+
+  protected prepareOne(query: Query<D, {}>): Query<D, {}> {
+    return query;
   }
 
   validateId = (req, resp, next) => {
@@ -23,8 +27,7 @@ export default abstract class ModelRouter<D extends Document> extends Router {
   };
 
   findById = (req, resp, next) => {
-    this.model
-      .findById(req.params.id)
+    this.prepareOne(this.model.findById(req.params.id))
       .then(this.render(resp, next))
       .catch(next);
   };
