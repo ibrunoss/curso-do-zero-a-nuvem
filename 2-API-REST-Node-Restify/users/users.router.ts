@@ -8,11 +8,47 @@ class UsersRouter extends ModelRouter<User> {
     super(User);
     this.on("beforeRender", (document) => (document.password = undefined));
   }
-  applyRoutes(application: restify.Server) {
-    const { validateId, findAll, findById, save, replace, update, remove } =
-      this;
 
-    application.get("/users", findAll);
+  findByEmail = (
+    { query }: restify.Request,
+    res: restify.Response,
+    next: restify.Next
+  ) => {
+    const { email } = query;
+
+    if (!email) {
+      return next();
+    }
+
+    User.find({ email }).then(this.renderAll(res, next)).catch;
+  };
+
+  applyRoutes(application: restify.Server) {
+    const {
+      validateId,
+      findAll,
+      findByEmail,
+      findById,
+      save,
+      replace,
+      update,
+      remove,
+    } = this;
+
+    application.get(
+      "/users",
+      restify.plugins.conditionalHandler([
+        {
+          version: "1.0.0",
+          handler: findAll,
+        },
+        {
+          version: "2.0.0",
+          handler: [findByEmail, findAll],
+        },
+      ])
+    );
+
     application.get("/users/:id", [validateId, findById]);
     application.post("/users", save);
     application.put("/users/:id", [validateId, replace]);
