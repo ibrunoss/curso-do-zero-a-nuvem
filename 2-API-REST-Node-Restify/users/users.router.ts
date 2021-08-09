@@ -20,7 +20,9 @@ class UsersRouter extends ModelRouter<User> {
       return next();
     }
 
-    User.find({ email }).then(this.renderAll(res, next)).catch;
+    User.findByEmail(email)
+      .then((user) => (user ? [user] : []))
+      .then(this.renderAll(res, next)).catch;
   };
 
   applyRoutes(application: restify.Server) {

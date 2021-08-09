@@ -11,7 +11,9 @@ class UsersRouter extends model_router_1.default {
             if (!email) {
                 return next();
             }
-            user_model_1.default.find({ email }).then(this.renderAll(res, next)).catch;
+            user_model_1.default.findByEmail(email)
+                .then((user) => (user ? [user] : []))
+                .then(this.renderAll(res, next)).catch;
         };
         this.on("beforeRender", (document) => (document.password = undefined));
     }
