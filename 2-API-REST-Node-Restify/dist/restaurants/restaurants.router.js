@@ -33,16 +33,21 @@ class RestaurantsRouter extends model_router_1.default {
                 .catch(next);
         };
     }
+    envelope(document) {
+        const resource = super.envelope(document);
+        resource._links.menu = `${resource._links.self}/menu`;
+        return resource;
+    }
     applyRoutes(application) {
         const { validateId, findAll, findById, save, replace, update, remove, findMenu, replaceMenu, } = this;
-        application.get("/restaurants", findAll);
-        application.get("/restaurants/:id", [validateId, findById]);
-        application.get("/restaurants/:id/menu", [validateId, findMenu]);
-        application.post("/restaurants", save);
-        application.put("/restaurants/:id", [validateId, replace]);
-        application.put("/restaurants/:id/menu", [validateId, replaceMenu]);
-        application.patch("/restaurants/:id", [validateId, update]);
-        application.del("/restaurants/:id", [validateId, remove]);
+        application.get(this.basePath, findAll);
+        application.get(`${this.basePath}/:id`, [validateId, findById]);
+        application.get(`${this.basePath}/:id/menu`, [validateId, findMenu]);
+        application.post(this.basePath, save);
+        application.put(`${this.basePath}/:id`, [validateId, replace]);
+        application.put(`${this.basePath}/:id/menu`, [validateId, replaceMenu]);
+        application.patch(`${this.basePath}/:id`, [validateId, update]);
+        application.del(`${this.basePath}/:id`, [validateId, remove]);
     }
 }
 exports.default = new RestaurantsRouter();

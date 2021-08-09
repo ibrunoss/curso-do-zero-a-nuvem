@@ -4,12 +4,22 @@ import { NotFoundError } from "restify-errors";
 import Router from "./router";
 
 export default abstract class ModelRouter<D extends Document> extends Router {
+  basePath: string;
+
   constructor(protected model: Model<D>) {
     super();
+
+    this.basePath = `/${this.model.collection.name}`;
   }
 
   protected prepareOne(query: Query<D, {}>): Query<D, {}> {
     return query;
+  }
+
+  envelope(document: any): any {
+    const resource = Object.assign({ _links: {} }, document.toJSON());
+    resource._links.self = `${this.basePath}/${resource._id}`;
+    return resource;
   }
 
   validateId = (req, resp, next) => {

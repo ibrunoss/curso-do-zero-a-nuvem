@@ -38,7 +38,7 @@ class UsersRouter extends ModelRouter<User> {
     } = this;
 
     application.get(
-      "/users",
+      this.basePath,
       restify.plugins.conditionalHandler([
         {
           version: "1.0.0",
@@ -51,11 +51,11 @@ class UsersRouter extends ModelRouter<User> {
       ])
     );
 
-    application.get("/users/:id", [validateId, findById]);
-    application.post("/users", save);
-    application.put("/users/:id", [validateId, replace]);
-    application.patch("/users/:id", [validateId, update]);
-    application.del("/users/:id", [validateId, remove]);
+    application.get(`${this.basePath}/:id`, [validateId, findById]);
+    application.post(this.basePath, save);
+    application.put(`${this.basePath}/:id`, [validateId, replace]);
+    application.patch(`${this.basePath}/:id`, [validateId, update]);
+    application.del(`${this.basePath}/:id`, [validateId, remove]);
   }
 }
 

@@ -9,6 +9,12 @@ class RestaurantsRouter extends ModelRouter<Restaurant> {
     super(Restaurant);
   }
 
+  envelope(document) {
+    const resource = super.envelope(document);
+    resource._links.menu = `${resource._links.self}/menu`;
+    return resource;
+  }
+
   findMenu = (req: Request, res: Response, next) => {
     Restaurant.findById(req.params.id, "+menu")
       .then((restaurant) => {
@@ -53,18 +59,18 @@ class RestaurantsRouter extends ModelRouter<Restaurant> {
       replaceMenu,
     } = this;
 
-    application.get("/restaurants", findAll);
-    application.get("/restaurants/:id", [validateId, findById]);
-    application.get("/restaurants/:id/menu", [validateId, findMenu]);
+    application.get(this.basePath, findAll);
+    application.get(`${this.basePath}/:id`, [validateId, findById]);
+    application.get(`${this.basePath}/:id/menu`, [validateId, findMenu]);
 
-    application.post("/restaurants", save);
+    application.post(this.basePath, save);
 
-    application.put("/restaurants/:id", [validateId, replace]);
-    application.put("/restaurants/:id/menu", [validateId, replaceMenu]);
+    application.put(`${this.basePath}/:id`, [validateId, replace]);
+    application.put(`${this.basePath}/:id/menu`, [validateId, replaceMenu]);
 
-    application.patch("/restaurants/:id", [validateId, update]);
+    application.patch(`${this.basePath}/:id`, [validateId, update]);
 
-    application.del("/restaurants/:id", [validateId, remove]);
+    application.del(`${this.basePath}/:id`, [validateId, remove]);
   }
 }
 

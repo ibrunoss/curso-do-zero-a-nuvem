@@ -19,7 +19,7 @@ class UsersRouter extends model_router_1.default {
     }
     applyRoutes(application) {
         const { validateId, findAll, findByEmail, findById, save, replace, update, remove, } = this;
-        application.get("/users", restify.plugins.conditionalHandler([
+        application.get(this.basePath, restify.plugins.conditionalHandler([
             {
                 version: "1.0.0",
                 handler: findAll,
@@ -29,11 +29,11 @@ class UsersRouter extends model_router_1.default {
                 handler: [findByEmail, findAll],
             },
         ]));
-        application.get("/users/:id", [validateId, findById]);
-        application.post("/users", save);
-        application.put("/users/:id", [validateId, replace]);
-        application.patch("/users/:id", [validateId, update]);
-        application.del("/users/:id", [validateId, remove]);
+        application.get(`${this.basePath}/:id`, [validateId, findById]);
+        application.post(this.basePath, save);
+        application.put(`${this.basePath}/:id`, [validateId, replace]);
+        application.patch(`${this.basePath}/:id`, [validateId, update]);
+        application.del(`${this.basePath}/:id`, [validateId, remove]);
     }
 }
 exports.default = new UsersRouter();
