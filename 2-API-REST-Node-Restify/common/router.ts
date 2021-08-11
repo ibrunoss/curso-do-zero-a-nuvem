@@ -9,6 +9,10 @@ export default abstract class Router extends EventEmitter {
     return document;
   }
 
+  envelopeAll(documents: any[], options: any = {}): any {
+    return documents;
+  }
+
   render(response: Response, next: Next) {
     return (document) => {
       if (document) {
@@ -21,16 +25,16 @@ export default abstract class Router extends EventEmitter {
     };
   }
 
-  renderAll(response: Response, next: Next) {
+  renderAll(response: Response, next: Next, options: any = {}) {
     return (documents: any[]) => {
       if (documents) {
         documents.forEach((document, i, a) => {
           this.emit("beforeRender", document);
           a[i] = this.envelope(document);
         });
-        response.json(documents);
+        response.json(this.envelopeAll(documents, options));
       } else {
-        response.json([]);
+        response.json(this.envelopeAll([], options));
       }
       return next();
     };

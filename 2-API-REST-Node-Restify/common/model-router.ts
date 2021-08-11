@@ -6,6 +6,8 @@ import Router from "./router";
 export default abstract class ModelRouter<D extends Document> extends Router {
   basePath: string;
 
+  pageSize: number = 2;
+
   constructor(protected model: Model<D>) {
     super();
 
@@ -22,6 +24,29 @@ export default abstract class ModelRouter<D extends Document> extends Router {
     return resource;
   }
 
+  envelopeAll(documents: any[], options: any = {}): any {
+    const resources: any = {
+      _links: { self: options.url },
+      items: documents,
+    };
+
+    if (options.page && options.count && options.pageSize) {
+      if (options.page > 1) {
+        resources._links.previous = `${this.basePath}?_page=${
+          options.page - 1
+        }`;
+      }
+
+      const remaining = options.count - options.page * options.pageSize;
+
+      if (remaining > 0) {
+        resources._links.next = `${this.basePath}?_page=${options.page + 1}`;
+      }
+    }
+
+    return resources;
+  }
+
   validateId = (req, resp, next) => {
     const { id } = req.params;
 
@@ -33,7 +58,29 @@ export default abstract class ModelRouter<D extends Document> extends Router {
   };
 
   findAll = (req, resp, next) => {
-    this.model.find().then(this.renderAll(resp, next)).catch(next);
+    let page = parseInt(req.query._page || 1);
+    page = page > 0 ? page : 1;
+
+    const skip = (page - 1) * this.pageSize;
+
+    this.model
+      .count({})
+      .exec()
+      .then((count) => {
+        const options = {
+          page,
+          count,
+          pageSize: this.pageSize,
+          url: req.url,
+        };
+
+        return this.model
+          .find()
+          .skip(skip)
+          .limit(this.pageSize)
+          .then(this.renderAll(resp, next, options));
+      })
+      .catch(next);
   };
 
   findById = (req, resp, next) => {
