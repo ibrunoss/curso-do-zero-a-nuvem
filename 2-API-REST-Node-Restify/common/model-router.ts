@@ -64,7 +64,7 @@ export default abstract class ModelRouter<D extends Document> extends Router {
     const skip = (page - 1) * this.pageSize;
 
     this.model
-      .count({})
+      .countDocuments({})
       .exec()
       .then((count) => {
         const options = {

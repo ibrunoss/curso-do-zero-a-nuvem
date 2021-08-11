@@ -20,7 +20,7 @@ class ModelRouter extends router_1.default {
             page = page > 0 ? page : 1;
             const skip = (page - 1) * this.pageSize;
             this.model
-                .count({})
+                .countDocuments({})
                 .exec()
                 .then((count) => {
                 const options = {
