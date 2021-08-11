@@ -4,7 +4,7 @@
   "description": "API de Restaurantes",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest ./dist"
   },
   "keywords": [],
   "author": "",
@@ -16,7 +16,10 @@
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",
+    "@types/jest": "^27.0.0",
     "@types/restify": "^8.5.2",
-    "@types/restify-errors": "^4.3.4"
+    "@types/restify-errors": "^4.3.4",
+    "axios": "^0.21.1",
+    "jest": "^27.0.6"
   }
 }
