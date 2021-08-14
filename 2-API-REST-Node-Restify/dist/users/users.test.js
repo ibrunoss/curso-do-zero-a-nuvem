@@ -38,10 +38,14 @@ test("GET /users", () => __awaiter(void 0, void 0, void 0, function* () {
     expect(res.status).toBe(200);
     expect(res.items).toBeInstanceOf(Array);
 }));
+test("GET /users/aaaaa - Not Found", () => __awaiter(void 0, void 0, void 0, function* () {
+    const res = yield request("/users/aaaaa", "get");
+    expect(res.status).toBe(404);
+}));
 test("POST /users", () => __awaiter(void 0, void 0, void 0, function* () {
     const user = {
-        name: "usuario1",
-        email: "usuario1@email.com",
+        name: "Novo Usuário",
+        email: "novo_usuario@email.com",
         password: "senha",
         cpf: "643.424.238-71",
     };
@@ -52,5 +56,25 @@ test("POST /users", () => __awaiter(void 0, void 0, void 0, function* () {
     expect(res.email).toBe(user.email);
     expect(res.cpf).toBe(user.cpf);
     expect(res.password).toBeUndefined();
+}));
+test("PATCH /users/:id", () => __awaiter(void 0, void 0, void 0, function* () {
+    const user = {
+        name: "Usuário Patch",
+        email: "usuario_patch@email.com",
+        password: "senha",
+    };
+    const res1 = yield request("/users", "post", user);
+    expect(res1.status).toBe(200);
+    expect(res1._id).toBeDefined();
+    expect(res1.name).toBe(user.name);
+    expect(res1.email).toBe(user.email);
+    expect(res1.password).toBeUndefined();
+    const name = "Modificação do Usuário Patch";
+    const res2 = yield request(`/users/${res1._id}`, "patch", { name });
+    expect(res2.status).toBe(200);
+    expect(res2._id).toBe(res1._id);
+    expect(res2.name).toBe(name);
+    expect(res2.email).toBe(user.email);
+    expect(res2.password).toBeUndefined();
 }));
 afterAll(() => server.shutdown());
