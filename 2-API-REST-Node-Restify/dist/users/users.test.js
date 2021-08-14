@@ -9,37 +9,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const axios_1 = require("axios");
-const server_1 = require("../server/server");
-const users_router_1 = require("./users.router");
-const user_model_1 = require("./user.model");
-const request = (endpoint, method, data = undefined) => {
-    const url = `http://localhost:3001${endpoint}`;
-    return axios_1.default({ url, method, data })
-        .then((res) => (Object.assign({ status: res.status }, res.data)))
-        .catch((err) => ({ status: err.response.status }));
-};
-let server;
-beforeAll(() => {
-    const db = process.env.DB_URL || "mongodb://localhost:27017/meat-api-test";
-    const port = process.env.SERVER_PORT || 3001;
-    server = new server_1.default(port, db);
-    return server
-        .bootstrap([users_router_1.default])
-        .then(() => user_model_1.default.deleteMany({}).exec())
-        .catch((err) => {
-        console.log("Server failed to start");
-        console.error(err);
-        process.exit(1);
-    });
-});
+const request_test_1 = require("../common/request-test");
 test("GET /users", () => __awaiter(void 0, void 0, void 0, function* () {
-    const res = yield request("/users", "get");
+    const res = yield request_test_1.default("/users", "get");
     expect(res.status).toBe(200);
     expect(res.items).toBeInstanceOf(Array);
 }));
 test("GET /users/aaaaa - Not Found", () => __awaiter(void 0, void 0, void 0, function* () {
-    const res = yield request("/users/aaaaa", "get");
+    const res = yield request_test_1.default("/users/aaaaa", "get");
     expect(res.status).toBe(404);
 }));
 test("POST /users", () => __awaiter(void 0, void 0, void 0, function* () {
@@ -49,7 +26,7 @@ test("POST /users", () => __awaiter(void 0, void 0, void 0, function* () {
         password: "senha",
         cpf: "643.424.238-71",
     };
-    const res = yield request("/users", "post", user);
+    const res = yield request_test_1.default("/users", "post", user);
     expect(res.status).toBe(200);
     expect(res._id).toBeDefined();
     expect(res.name).toBe(user.name);
@@ -63,18 +40,17 @@ test("PATCH /users/:id", () => __awaiter(void 0, void 0, void 0, function* () {
         email: "usuario_patch@email.com",
         password: "senha",
     };
-    const res1 = yield request("/users", "post", user);
+    const res1 = yield request_test_1.default("/users", "post", user);
     expect(res1.status).toBe(200);
     expect(res1._id).toBeDefined();
     expect(res1.name).toBe(user.name);
     expect(res1.email).toBe(user.email);
     expect(res1.password).toBeUndefined();
     const name = "Modificação do Usuário Patch";
-    const res2 = yield request(`/users/${res1._id}`, "patch", { name });
+    const res2 = yield request_test_1.default(`/users/${res1._id}`, "patch", { name });
     expect(res2.status).toBe(200);
     expect(res2._id).toBe(res1._id);
     expect(res2.name).toBe(name);
     expect(res2.email).toBe(user.email);
     expect(res2.password).toBeUndefined();
 }));
-afterAll(() => server.shutdown());

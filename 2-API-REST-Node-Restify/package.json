@@ -4,7 +4,7 @@
   "description": "API de Restaurantes",
   "main": "index.js",
   "scripts": {
-    "test": "jest ./dist"
+    "test": "ts-node jest.startup.ts ./dist"
   },
   "keywords": [],
   "author": "",
@@ -20,6 +20,8 @@
     "@types/restify": "^8.5.2",
     "@types/restify-errors": "^4.3.4",
     "axios": "^0.21.1",
-    "jest": "^27.0.6"
+    "jest": "^27.0.6",
+    "jest-cli": "^27.0.6",
+    "ts-node": "^10.2.0"
   }
 }
