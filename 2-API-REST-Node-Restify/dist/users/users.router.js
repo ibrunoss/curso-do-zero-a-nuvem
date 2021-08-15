@@ -6,14 +6,17 @@ const user_model_1 = require("./user.model");
 class UsersRouter extends model_router_1.default {
     constructor() {
         super(user_model_1.default);
-        this.findByEmail = ({ query }, res, next) => {
+        this.findByEmail = ({ query, url }, res, next) => {
             const { email } = query;
             if (!email) {
                 return next();
             }
             user_model_1.default.findByEmail(email)
                 .then((user) => (user ? [user] : []))
-                .then(this.renderAll(res, next)).catch;
+                .then(this.renderAll(res, next, {
+                pageSize: this.pageSize,
+                url,
+            })).catch;
         };
         this.on("beforeRender", (document) => (document.password = undefined));
     }

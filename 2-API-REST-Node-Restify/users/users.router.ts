@@ -10,7 +10,7 @@ class UsersRouter extends ModelRouter<User> {
   }
 
   findByEmail = (
-    { query }: restify.Request,
+    { query, url }: restify.Request,
     res: restify.Response,
     next: restify.Next
   ) => {
@@ -22,7 +22,12 @@ class UsersRouter extends ModelRouter<User> {
 
     User.findByEmail(email)
       .then((user) => (user ? [user] : []))
-      .then(this.renderAll(res, next)).catch;
+      .then(
+        this.renderAll(res, next, {
+          pageSize: this.pageSize,
+          url,
+        })
+      ).catch;
   };
 
   applyRoutes(application: restify.Server) {
