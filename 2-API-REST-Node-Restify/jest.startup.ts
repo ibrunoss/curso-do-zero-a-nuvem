@@ -5,6 +5,8 @@ import User from "./users/user.model";
 import usersRouter from "./users/users.router";
 import Review from "./reviews/reviews.model";
 import reviewsRouter from "./reviews/reviews.router";
+import Restaurant from "./restaurants/restaurants.model";
+import restaurantsRouter from "./restaurants/restaurants.router";
 
 let server: Server;
 
@@ -15,9 +17,10 @@ const beforeAllTests = () => {
   server = new Server(port, db);
 
   return server
-    .bootstrap([usersRouter, reviewsRouter])
+    .bootstrap([usersRouter, reviewsRouter, restaurantsRouter])
     .then(() => User.deleteMany({}).exec())
     .then(() => Review.deleteMany({}).exec())
+    .then(() => Restaurant.deleteMany({}).exec())
     .catch((err) => {
       console.log("Server failed to start");
       console.error(err);
