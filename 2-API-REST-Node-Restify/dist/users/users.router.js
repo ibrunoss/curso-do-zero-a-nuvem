@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const restify = require("restify");
 const model_router_1 = require("../common/model-router");
 const user_model_1 = require("./user.model");
+const auth_handler_1 = require("../security/auth.handler");
 class UsersRouter extends model_router_1.default {
     constructor() {
         super(user_model_1.default);
@@ -34,6 +35,7 @@ class UsersRouter extends model_router_1.default {
         ]));
         application.get(`${this.basePath}/:id`, [validateId, findById]);
         application.post(this.basePath, save);
+        application.post(`${this.basePath}/authenticate`, auth_handler_1.authenticate);
         application.put(`${this.basePath}/:id`, [validateId, replace]);
         application.patch(`${this.basePath}/:id`, [validateId, update]);
         application.del(`${this.basePath}/:id`, [validateId, remove]);

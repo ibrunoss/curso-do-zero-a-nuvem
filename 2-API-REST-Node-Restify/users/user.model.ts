@@ -8,10 +8,13 @@ interface User extends mongoose.Document {
   name: string;
   email: string;
   password: string;
+  gender: string;
+  cpf: string;
+  matches(password: string): boolean;
 }
 
 interface UserModel extends mongoose.Model<User> {
-  findByEmail(email: string): Promise<User>;
+  findByEmail(email: string, projection?: string): Promise<User>;
 }
 
 const userSchema = new mongoose.Schema({
@@ -48,8 +51,14 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-userSchema.statics.findByEmail = function (email: string) {
-  return this.findOne({ email });
+// Método Associado ao modelo
+userSchema.statics.findByEmail = function (email: string, projection: string) {
+  return this.findOne({ email }, projection);
+};
+
+// Método Associado a instância
+userSchema.methods.matches = function (password: string): boolean {
+  return bcrypt.compareSync(password, (<User>this).password);
 };
 
 const hashPassword = (obj, next) => {
