@@ -4,6 +4,7 @@ const restify = require("restify");
 const mongoose = require("mongoose");
 const merge_patch_parser_1 = require("./merge-patch.parser");
 const error_handler_1 = require("./error.handler");
+const token_parse_1 = require("../security/token.parse");
 class Server {
     constructor(port, dbURL) {
         this.port = port;
@@ -27,6 +28,7 @@ class Server {
                 this.application.use(restify.plugins.queryParser());
                 this.application.use(restify.plugins.bodyParser());
                 this.application.use(merge_patch_parser_1.mergePatchBodyParser);
+                this.application.use(token_parse_1.default);
                 //Routes
                 for (let router of routers) {
                     router.applyRoutes(this.application);
