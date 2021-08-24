@@ -10,6 +10,8 @@ interface User extends mongoose.Document {
   password: string;
   gender: string;
   cpf: string;
+  profiles: string[];
+  hasAny(...profiles: string[]): boolean;
   matches(password: string): boolean;
 }
 
@@ -49,6 +51,10 @@ const userSchema = new mongoose.Schema({
       message: "Invalid CPF ({VALUE})", //{PATH}:
     },
   },
+  profiles: {
+    type: [String],
+    required: false,
+  },
 });
 
 // Método Associado ao modelo
@@ -59,6 +65,12 @@ userSchema.statics.findByEmail = function (email: string, projection: string) {
 // Método Associado a instância
 userSchema.methods.matches = function (password: string): boolean {
   return bcrypt.compareSync(password, (<User>this).password);
+};
+
+userSchema.methods.hasAny = function (...profiles: string[]): boolean {
+  return profiles.some(
+    (profile) => (<User>this).profiles.indexOf(profile) !== -1
+  );
 };
 
 const hashPassword = (obj, next) => {

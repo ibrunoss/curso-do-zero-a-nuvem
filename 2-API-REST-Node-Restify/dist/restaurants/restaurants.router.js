@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const restify_errors_1 = require("restify-errors");
 const model_router_1 = require("../common/model-router");
 const restaurants_model_1 = require("./restaurants.model");
+const auth_handler_1 = require("../security/auth.handler");
 class RestaurantsRouter extends model_router_1.default {
     constructor() {
         super(restaurants_model_1.default);
@@ -43,11 +44,27 @@ class RestaurantsRouter extends model_router_1.default {
         application.get(this.basePath, findAll);
         application.get(`${this.basePath}/:id`, [validateId, findById]);
         application.get(`${this.basePath}/:id/menu`, [validateId, findMenu]);
-        application.post(this.basePath, save);
-        application.put(`${this.basePath}/:id`, [validateId, replace]);
-        application.put(`${this.basePath}/:id/menu`, [validateId, replaceMenu]);
-        application.patch(`${this.basePath}/:id`, [validateId, update]);
-        application.del(`${this.basePath}/:id`, [validateId, remove]);
+        application.post(this.basePath, [auth_handler_1.authorize("admin"), save]);
+        application.put(`${this.basePath}/:id`, [
+            auth_handler_1.authorize("admin"),
+            validateId,
+            replace,
+        ]);
+        application.put(`${this.basePath}/:id/menu`, [
+            auth_handler_1.authorize("admin"),
+            validateId,
+            replaceMenu,
+        ]);
+        application.patch(`${this.basePath}/:id`, [
+            auth_handler_1.authorize("admin"),
+            validateId,
+            update,
+        ]);
+        application.del(`${this.basePath}/:id`, [
+            auth_handler_1.authorize("admin"),
+            validateId,
+            remove,
+        ]);
     }
 }
 exports.default = new RestaurantsRouter();

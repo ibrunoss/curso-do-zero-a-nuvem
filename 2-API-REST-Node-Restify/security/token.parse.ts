@@ -8,7 +8,11 @@ const tokenParser: RequestHandler = (req, res, next) => {
   const token = extractToken(req);
 
   if (token) {
-    jwt.verify(token, environment.security.apiSecret, applyBearer(req, next));
+    return jwt.verify(
+      token,
+      environment.security.apiSecret,
+      applyBearer(req, next)
+    );
   }
 
   next();
@@ -31,14 +35,13 @@ function extractToken(req: Request): string | undefined {
 }
 
 function applyBearer(req: Request, next: Next): (error, decoded) => void {
-  return (error, decoded) => {
+  return async (error, decoded) => {
     if (decoded) {
-      User.findByEmail(decoded.sub)
+      await User.findByEmail(decoded.sub)
         .then((user) => {
           if (user) {
             req.authenticated = user;
           }
-          next();
         })
         .catch(next);
     }

@@ -35,6 +35,10 @@ const userSchema = new mongoose.Schema({
             message: "Invalid CPF ({VALUE})", //{PATH}:
         },
     },
+    profiles: {
+        type: [String],
+        required: false,
+    },
 });
 // Método Associado ao modelo
 userSchema.statics.findByEmail = function (email, projection) {
@@ -43,6 +47,9 @@ userSchema.statics.findByEmail = function (email, projection) {
 // Método Associado a instância
 userSchema.methods.matches = function (password) {
     return bcrypt.compareSync(password, this.password);
+};
+userSchema.methods.hasAny = function (...profiles) {
+    return profiles.some((profile) => this.profiles.indexOf(profile) !== -1);
 };
 const hashPassword = (obj, next) => {
     bcrypt

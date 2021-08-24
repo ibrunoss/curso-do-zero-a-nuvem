@@ -1,5 +1,5 @@
 import { RequestHandler } from "restify";
-import { NotAuthorizedError } from "restify-errors";
+import { ForbiddenError, NotAuthorizedError } from "restify-errors";
 import * as jwt from "jsonwebtoken";
 
 import User from "../users/user.model";
@@ -20,10 +20,19 @@ export const authenticate: RequestHandler = (req, res, next) => {
 
         res.json({ name, email, accessToken });
 
-        return next(false);
-      } else {
-        return next(new NotAuthorizedError("Invalid Credentials"));
+        next(false);
       }
+      return next(new NotAuthorizedError("Invalid Credentials"));
     })
     .catch(next);
 };
+
+export const authorize: (...profiles: string[]) => RequestHandler =
+  (...profiles) =>
+  ({ authenticated }, res, next) => {
+    if (authenticated !== undefined && authenticated.hasAny(...profiles)) {
+      return next();
+    }
+
+    next(new ForbiddenError("Permission denied"));
+  };

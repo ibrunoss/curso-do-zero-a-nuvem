@@ -3,6 +3,7 @@ import { Server, Request, Response, Next } from "restify";
 
 import ModelRouter from "../common/model-router";
 import Review from "./reviews.model";
+import { authorize } from "../security/auth.handler";
 
 class ReviewsRouter extends ModelRouter<Review> {
   constructor() {
@@ -27,7 +28,7 @@ class ReviewsRouter extends ModelRouter<Review> {
 
     application.get(this.basePath, findAll);
     application.get(`${this.basePath}/:id`, [validateId, findById]);
-    application.post(this.basePath, save);
+    application.post(this.basePath, [authorize("user"), save]);
   }
 }
 

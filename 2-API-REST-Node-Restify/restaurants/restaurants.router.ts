@@ -3,7 +3,7 @@ import { NotFoundError } from "restify-errors";
 
 import ModelRouter from "../common/model-router";
 import Restaurant from "./restaurants.model";
-
+import { authorize } from "../security/auth.handler";
 class RestaurantsRouter extends ModelRouter<Restaurant> {
   constructor() {
     super(Restaurant);
@@ -63,14 +63,30 @@ class RestaurantsRouter extends ModelRouter<Restaurant> {
     application.get(`${this.basePath}/:id`, [validateId, findById]);
     application.get(`${this.basePath}/:id/menu`, [validateId, findMenu]);
 
-    application.post(this.basePath, save);
+    application.post(this.basePath, [authorize("admin"), save]);
 
-    application.put(`${this.basePath}/:id`, [validateId, replace]);
-    application.put(`${this.basePath}/:id/menu`, [validateId, replaceMenu]);
+    application.put(`${this.basePath}/:id`, [
+      authorize("admin"),
+      validateId,
+      replace,
+    ]);
+    application.put(`${this.basePath}/:id/menu`, [
+      authorize("admin"),
+      validateId,
+      replaceMenu,
+    ]);
 
-    application.patch(`${this.basePath}/:id`, [validateId, update]);
+    application.patch(`${this.basePath}/:id`, [
+      authorize("admin"),
+      validateId,
+      update,
+    ]);
 
-    application.del(`${this.basePath}/:id`, [validateId, remove]);
+    application.del(`${this.basePath}/:id`, [
+      authorize("admin"),
+      validateId,
+      remove,
+    ]);
   }
 }
 
