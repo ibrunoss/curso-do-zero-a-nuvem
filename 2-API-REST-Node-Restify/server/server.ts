@@ -1,5 +1,6 @@
 import * as restify from "restify";
 import * as mongoose from "mongoose";
+import { readFileSync } from "fs";
 
 import Router from "../common/router";
 import { mergePatchBodyParser } from "./merge-patch.parser";
@@ -26,6 +27,8 @@ export default class Server {
         this.application = restify.createServer({
           name: "meat-api",
           version: "1.0.0",
+          certificate: readFileSync("./security/keys/cert.pem"),
+          key: readFileSync("./security/keys/key.pem"),
         });
 
         this.application.use(restify.plugins.queryParser());
