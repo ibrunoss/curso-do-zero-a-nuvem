@@ -9,6 +9,9 @@ interface DataBaseEnvironment {
 interface SecurityEnvironment {
   salt: number | string;
   apiSecret: string;
+  enableHTTPS: boolean;
+  certificate: string;
+  key: string;
 }
 
 interface Environment {
@@ -23,6 +26,9 @@ const environment: Environment = {
   security: {
     salt: process.env.SALT_ROUNDS || 10,
     apiSecret: process.env.API_SECRET || "meat-api-secret",
+    enableHTTPS: !!parseInt(process.env.ENABLE_HTTPS) || true,
+    certificate: process.env.CERT_FILE || "./security/keys/cert.pem",
+    key: process.env.CERT_KEY || "./security/keys/key.pem",
   },
 };
 

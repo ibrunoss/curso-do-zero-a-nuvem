@@ -1,12 +1,19 @@
-import axios, { Method } from "axios";
+import axios, { Method, AxiosRequestConfig } from "axios";
 
 export default (
   endpoint: string,
   method: Method,
-  data: any = undefined
+  data: any = undefined,
+  headers?: any
 ): any => {
   const url = `http://localhost:3001${endpoint}`;
-  return axios({ url, method, data })
+  const options: AxiosRequestConfig = { url, method, data };
+
+  if (headers) {
+    options.headers = headers;
+  }
+
+  return axios(options)
     .then((res) => ({ status: res.status, ...res.data }))
     .catch((err) => ({ status: err.response.status }));
 };

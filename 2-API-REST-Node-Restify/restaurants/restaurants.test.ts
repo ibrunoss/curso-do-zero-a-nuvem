@@ -14,11 +14,23 @@ test("GET /restaurants/aaaaa - Not Found", async () => {
 });
 
 test("POST /restaurants", async () => {
+  const authUser = {
+    email: "admin@fortest.com",
+    password: "adminPass",
+  };
+
+  const auth = await request("/users/authenticate", "post", authUser);
+
+  expect(auth.status).toBe(200);
+  expect(auth.accessToken).toBeDefined();
+
+  const header = { Authorization: `Bearer ${auth.accessToken}` };
+
   const restaurant = {
     name: "Smash Burger House",
   };
 
-  const res = await request("/restaurants", "post", restaurant);
+  const res = await request("/restaurants", "post", restaurant, header);
 
   expect(res.status).toBe(200);
   expect(res._id).toBeDefined();
@@ -26,11 +38,23 @@ test("POST /restaurants", async () => {
 });
 
 test("PATCH /restaurants/:id", async () => {
+  const authUser = {
+    email: "admin@fortest.com",
+    password: "adminPass",
+  };
+
+  const auth = await request("/users/authenticate", "post", authUser);
+
+  expect(auth.status).toBe(200);
+  expect(auth.accessToken).toBeDefined();
+
+  const header = { Authorization: `Bearer ${auth.accessToken}` };
+
   const restaurant = {
     name: "Mana Burger House",
   };
 
-  const res1 = await request("/restaurants", "post", restaurant);
+  const res1 = await request("/restaurants", "post", restaurant, header);
 
   expect(res1.status).toBe(200);
   expect(res1._id).toBeDefined();
@@ -38,7 +62,12 @@ test("PATCH /restaurants/:id", async () => {
 
   const name = "Modificação do Restaurante";
 
-  const res2 = await request(`/restaurants/${res1._id}`, "patch", { name });
+  const res2 = await request(
+    `/restaurants/${res1._id}`,
+    "patch",
+    { name },
+    header
+  );
 
   expect(res2.status).toBe(200);
   expect(res2._id).toBe(res1._id);
@@ -46,11 +75,23 @@ test("PATCH /restaurants/:id", async () => {
 });
 
 test("PUT /restaurants/:id/menu", async () => {
+  const authUser = {
+    email: "admin@fortest.com",
+    password: "adminPass",
+  };
+
+  const auth = await request("/users/authenticate", "post", authUser);
+
+  expect(auth.status).toBe(200);
+  expect(auth.accessToken).toBeDefined();
+
+  const header = { Authorization: `Bearer ${auth.accessToken}` };
+
   const restaurant = {
     name: "Burger Point",
   };
 
-  const res1 = await request("/restaurants", "post", restaurant);
+  const res1 = await request("/restaurants", "post", restaurant, header);
 
   expect(res1.status).toBe(200);
   expect(res1._id).toBeDefined();
@@ -67,7 +108,12 @@ test("PUT /restaurants/:id/menu", async () => {
     },
   ];
 
-  const res2 = await request(`/restaurants/${res1._id}/menu`, "put", menu);
+  const res2 = await request(
+    `/restaurants/${res1._id}/menu`,
+    "put",
+    menu,
+    header
+  );
 
   expect(res2.status).toBe(200);
   expect(res2[0]._id).toBeDefined();

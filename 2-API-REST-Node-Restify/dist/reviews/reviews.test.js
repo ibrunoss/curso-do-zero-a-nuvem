@@ -19,6 +19,17 @@ test("GET /reviews/aaaaa - Not Found", () => __awaiter(void 0, void 0, void 0, f
     const res = yield request_test_1.default("/reviews/aaaaa", "get");
     expect(res.status).toBe(404);
 }));
+test("POST /reviews - Without credentials", () => __awaiter(void 0, void 0, void 0, function* () {
+    const review = {
+        date: "2021-08-14T22:50:06",
+        restaurant: "6108b2948649eb2eff8a35ee",
+        user: "61016cc30c36037cab630885",
+        rating: 4.8,
+        comments: "Comida muito boa, atendimento rápido",
+    };
+    let res = yield request_test_1.default("/reviews", "post", review);
+    expect(res.status).toBe(403);
+}));
 test("POST /reviews", () => __awaiter(void 0, void 0, void 0, function* () {
     const review = {
         date: "2021-08-14T22:50:06",
@@ -27,7 +38,15 @@ test("POST /reviews", () => __awaiter(void 0, void 0, void 0, function* () {
         rating: 4.8,
         comments: "Comida muito boa, atendimento rápido",
     };
-    const res = yield request_test_1.default("/reviews", "post", review);
+    const user = {
+        email: "user@fortest.com",
+        password: "userPass",
+    };
+    const auth = yield request_test_1.default("/users/authenticate", "post", user);
+    expect(auth.status).toBe(200);
+    expect(auth.accessToken).toBeDefined();
+    const header = { Authorization: `Bearer ${auth.accessToken}` };
+    const res = yield request_test_1.default("/reviews", "post", review, header);
     expect(res.status).toBe(200);
     expect(res._id).toBeDefined();
     expect(res.date).toBe(new Date(review.date).toISOString());

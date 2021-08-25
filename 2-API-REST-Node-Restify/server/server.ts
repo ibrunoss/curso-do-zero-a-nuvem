@@ -8,7 +8,13 @@ import handleError from "./error.handler";
 import tokenParser from "../security/token.parse";
 
 export default class Server {
-  constructor(private port: number | string, private dbURL: string) {}
+  constructor(
+    private port: number | string,
+    private dbURL: string,
+    private certificate: string,
+    private key: string,
+    private enableHTTPS: boolean
+  ) {}
 
   application: restify.Server;
 
@@ -24,12 +30,17 @@ export default class Server {
   initRoutes(routers: Router[]): Promise<any> {
     return new Promise((resolve, reject) => {
       try {
-        this.application = restify.createServer({
+        const options: restify.ServerOptions = {
           name: "meat-api",
           version: "1.0.0",
-          certificate: readFileSync("./security/keys/cert.pem"),
-          key: readFileSync("./security/keys/key.pem"),
-        });
+        };
+
+        if (this.enableHTTPS) {
+          (options.certificate = readFileSync(this.certificate)),
+            (options.key = readFileSync(this.key));
+        }
+
+        this.application = restify.createServer(options);
 
         this.application.use(restify.plugins.queryParser());
         this.application.use(restify.plugins.bodyParser());

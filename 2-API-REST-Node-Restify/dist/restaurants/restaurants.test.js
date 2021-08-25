@@ -20,33 +20,57 @@ test("GET /restaurants/aaaaa - Not Found", () => __awaiter(void 0, void 0, void 
     expect(res.status).toBe(404);
 }));
 test("POST /restaurants", () => __awaiter(void 0, void 0, void 0, function* () {
+    const authUser = {
+        email: "admin@fortest.com",
+        password: "adminPass",
+    };
+    const auth = yield request_test_1.default("/users/authenticate", "post", authUser);
+    expect(auth.status).toBe(200);
+    expect(auth.accessToken).toBeDefined();
+    const header = { Authorization: `Bearer ${auth.accessToken}` };
     const restaurant = {
         name: "Smash Burger House",
     };
-    const res = yield request_test_1.default("/restaurants", "post", restaurant);
+    const res = yield request_test_1.default("/restaurants", "post", restaurant, header);
     expect(res.status).toBe(200);
     expect(res._id).toBeDefined();
     expect(res.name).toBe(restaurant.name);
 }));
 test("PATCH /restaurants/:id", () => __awaiter(void 0, void 0, void 0, function* () {
+    const authUser = {
+        email: "admin@fortest.com",
+        password: "adminPass",
+    };
+    const auth = yield request_test_1.default("/users/authenticate", "post", authUser);
+    expect(auth.status).toBe(200);
+    expect(auth.accessToken).toBeDefined();
+    const header = { Authorization: `Bearer ${auth.accessToken}` };
     const restaurant = {
         name: "Mana Burger House",
     };
-    const res1 = yield request_test_1.default("/restaurants", "post", restaurant);
+    const res1 = yield request_test_1.default("/restaurants", "post", restaurant, header);
     expect(res1.status).toBe(200);
     expect(res1._id).toBeDefined();
     expect(res1.name).toBe(restaurant.name);
     const name = "Modificação do Restaurante";
-    const res2 = yield request_test_1.default(`/restaurants/${res1._id}`, "patch", { name });
+    const res2 = yield request_test_1.default(`/restaurants/${res1._id}`, "patch", { name }, header);
     expect(res2.status).toBe(200);
     expect(res2._id).toBe(res1._id);
     expect(res2.name).toBe(name);
 }));
 test("PUT /restaurants/:id/menu", () => __awaiter(void 0, void 0, void 0, function* () {
+    const authUser = {
+        email: "admin@fortest.com",
+        password: "adminPass",
+    };
+    const auth = yield request_test_1.default("/users/authenticate", "post", authUser);
+    expect(auth.status).toBe(200);
+    expect(auth.accessToken).toBeDefined();
+    const header = { Authorization: `Bearer ${auth.accessToken}` };
     const restaurant = {
         name: "Burger Point",
     };
-    const res1 = yield request_test_1.default("/restaurants", "post", restaurant);
+    const res1 = yield request_test_1.default("/restaurants", "post", restaurant, header);
     expect(res1.status).toBe(200);
     expect(res1._id).toBeDefined();
     expect(res1.name).toBe(restaurant.name);
@@ -60,7 +84,7 @@ test("PUT /restaurants/:id/menu", () => __awaiter(void 0, void 0, void 0, functi
             price: 5,
         },
     ];
-    const res2 = yield request_test_1.default(`/restaurants/${res1._id}/menu`, "put", menu);
+    const res2 = yield request_test_1.default(`/restaurants/${res1._id}/menu`, "put", menu, header);
     expect(res2.status).toBe(200);
     expect(res2[0]._id).toBeDefined();
     expect(res2[0].name).toBe(menu[0].name);
