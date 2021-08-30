@@ -1,0 +1,11 @@
+{
+  "name": "cluster-e-gerenciamento-de-processos-com-pm2",
+  "version": "1.0.0",
+  "description": "Aprendendo sobre gerenciamento de processos",
+  "dependencies": {
+    "restify": "^8.5.1"
+  },
+  "devDependencies": {
+    "@types/restify": "^8.5.2"
+  }
+}
