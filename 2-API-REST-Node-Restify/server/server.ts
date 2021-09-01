@@ -56,10 +56,6 @@ export default class Server {
         }
 
         this.application.on("restifyError", handleError);
-        this.application.on(
-          "after",
-          restify.plugins.auditLogger({ log, event: "after", body: true })
-        );
 
         this.application.listen(this.port, () => resolve(this.application));
       } catch (error) {
