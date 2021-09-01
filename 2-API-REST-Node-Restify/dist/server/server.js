@@ -6,6 +6,7 @@ const fs_1 = require("fs");
 const merge_patch_parser_1 = require("./merge-patch.parser");
 const error_handler_1 = require("./error.handler");
 const token_parse_1 = require("../security/token.parse");
+const logger_1 = require("../common/logger");
 class Server {
     constructor(port, dbURL, certificate, key, enableHTTPS) {
         this.port = port;
@@ -28,12 +29,14 @@ class Server {
                 const options = {
                     name: "meat-api",
                     version: "1.0.0",
+                    log: logger_1.default,
                 };
                 if (this.enableHTTPS) {
                     (options.certificate = fs_1.readFileSync(this.certificate)),
                         (options.key = fs_1.readFileSync(this.key));
                 }
                 this.application = restify.createServer(options);
+                this.application.pre(restify.plugins.requestLogger({ log: logger_1.default }));
                 this.application.use(restify.plugins.queryParser());
                 this.application.use(restify.plugins.bodyParser());
                 this.application.use(merge_patch_parser_1.mergePatchBodyParser);

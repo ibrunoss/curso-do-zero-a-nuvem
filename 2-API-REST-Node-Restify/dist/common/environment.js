@@ -10,5 +10,9 @@ const environment = {
         certificate: process.env.CERT_FILE || "./security/keys/cert.pem",
         key: process.env.CERT_KEY || "./security/keys/key.pem",
     },
+    log: {
+        name: "meat-api",
+        level: process.env.LOG_LEVEL || "debug",
+    },
 };
 exports.default = environment;

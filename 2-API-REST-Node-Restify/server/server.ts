@@ -6,7 +6,7 @@ import Router from "../common/router";
 import { mergePatchBodyParser } from "./merge-patch.parser";
 import handleError from "./error.handler";
 import tokenParser from "../security/token.parse";
-
+import log from "../common/logger";
 export default class Server {
   constructor(
     private port: number | string,
@@ -33,6 +33,7 @@ export default class Server {
         const options: restify.ServerOptions = {
           name: "meat-api",
           version: "1.0.0",
+          log,
         };
 
         if (this.enableHTTPS) {
@@ -41,6 +42,8 @@ export default class Server {
         }
 
         this.application = restify.createServer(options);
+
+        this.application.pre(restify.plugins.requestLogger({ log }));
 
         this.application.use(restify.plugins.queryParser());
         this.application.use(restify.plugins.bodyParser());

@@ -14,10 +14,17 @@ interface SecurityEnvironment {
   key: string;
 }
 
+type LogLevelString = "trace" | "debug" | "info" | "warn" | "error" | "fatal";
+interface LogEnvironment {
+  name: string;
+  level: LogLevelString;
+}
+
 interface Environment {
   server: ServerEnvironment;
   db: DataBaseEnvironment;
   security: SecurityEnvironment;
+  log: LogEnvironment;
 }
 
 const environment: Environment = {
@@ -29,6 +36,10 @@ const environment: Environment = {
     enableHTTPS: !!parseInt(process.env.ENABLE_HTTPS) || true,
     certificate: process.env.CERT_FILE || "./security/keys/cert.pem",
     key: process.env.CERT_KEY || "./security/keys/key.pem",
+  },
+  log: {
+    name: "meat-api",
+    level: <LogLevelString>process.env.LOG_LEVEL || "debug",
   },
 };
 

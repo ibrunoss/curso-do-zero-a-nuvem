@@ -20,9 +20,14 @@ const authenticate = (req, res, next) => {
         .catch(next);
 };
 exports.authenticate = authenticate;
-const authorize = (...profiles) => ({ authenticated }, res, next) => {
+const authorize = (...profiles) => (req, res, next) => {
+    const { authenticated, log, path } = req;
     if (authenticated !== undefined && authenticated.hasAny(...profiles)) {
+        log.debug("User %s is authorized with profiles %j on route %s. Required profiles: %j", authenticated._id, authenticated.profiles, req.path(), profiles);
         return next();
+    }
+    if (authenticated) {
+        log.debug("Permission denied for %s. Required profiles: %j. User profiles: %j", authenticated._id, profiles, authenticated.profiles);
     }
     next(new restify_errors_1.ForbiddenError("Permission denied"));
 };
