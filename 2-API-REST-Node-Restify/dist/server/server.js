@@ -46,6 +46,7 @@ class Server {
                     router.applyRoutes(this.application);
                 }
                 this.application.on("restifyError", error_handler_1.default);
+                this.application.on("after", restify.plugins.auditLogger({ log: logger_1.default, event: "after", body: true }));
                 this.application.listen(this.port, () => resolve(this.application));
             }
             catch (error) {
